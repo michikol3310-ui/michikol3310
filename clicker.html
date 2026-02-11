@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="theme-color" content="#80ffff">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>michikol3310 Clicker</title>
+    <link rel="icon" type="image/png" href="./Images/cube_89.png">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Thambi+2:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        button {
+            border: none;
+            background: transparent;
+            padding: 0;
+            cursor: pointer;
+            box-shadow: none;
+            -webkit-appearance: none;
+            appearance: none;
+            transform-origin: center;
+            transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 180ms;
+            will-change: transform;
+        }
+        button:focus {
+            outline: none;
+        }
+        button img {
+            display: block;
+            width: 250px;
+            height: 250px;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        /* Hover / focus-visible scale-up and active press feedback */
+        button:hover,
+        button:focus-visible {
+            transform: scale(1.08);
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* UI container and counter styling */
+        .ui{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            z-index: 1;
+            pointer-events: auto;
+        }
+        .counter{
+            font-family: 'Baloo Thambi 2', cursive;
+            font-weight: 800;
+            font-size: 64px;
+            line-height: 1;
+            color: #ffffff;
+            -webkit-text-stroke: 2px #000000;
+            text-shadow:
+                0 0 1px #000,
+                0 0 2px #000,
+                0 0 3px #000;
+            user-select: none;
+            transform-origin: center;
+            transition: transform 140ms ease;
+        }
+
+        .counter.pop{
+            transform: scale(1.12);
+        }
+        /* Fixed transform-based background track for smooth continuous scroll */
+        .bg-wrap{
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .bg-track{
+            display: flex;
+            width: 200vw; /* two viewport-width panels */
+            height: 100vh; /* fill viewport height to avoid vertical clipping */
+            will-change: transform;
+            animation: trackScroll 20s linear infinite;
+        }
+        .bg-track .bg{
+            flex: 0 0 100vw; /* each panel equals one viewport width */
+            background-image: url('./Images/Background.png');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover; /* cover the full viewport without tiling */
+        }
+        @keyframes trackScroll{
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-wrap">
+        <div class="bg-track">
+            <div class="bg"></div>
+            <div class="bg"></div>
+        </div>
+    </div>
+    <div class="ui">
+        <button id="clickerBtn" type="button" aria-label="Clicker button">
+            <img src="./Images/michikol3310Icon.png" alt="Clicker Icon">
+        </button>
+        <div id="counter" class="counter" aria-live="polite" aria-atomic="true">0</div>
+    </div>
+
+    <script>
+        (function(){
+            const btn = document.getElementById('clickerBtn');
+            const counter = document.getElementById('counter');
+            let count = 0;
+
+            // Funkcja konwertująca liczby na format K/M/B
+            function formatClicks(number) {
+                if (number >= 1_000_000_000) {
+                    return (number / 1_000_000_000).toFixed(1) + 'B';
+                } else if (number >= 1_000_000) {
+                    return (number / 1_000_000).toFixed(1) + 'M';
+                } else if (number >= 1_000) {
+                    return (number / 1_000).toFixed(1) + 'K';
+                } else {
+                    return number.toString();
+                }
+            }
+
+            btn.addEventListener('click', function(){
+                count += 1;
+                counter.textContent = formatClicks(count); // <-- teraz wyświetla 1.2K zamiast 1200
+                // animacja "pop"
+                counter.classList.add('pop');
+                window.setTimeout(()=> counter.classList.remove('pop'), 160);
+            });
+        })();
+    </script>
+    <audio id="bg-audio" src="./Audio/Whatever.mp3" loop preload="auto"></audio>
+    <script>
+        (function(){
+            const audio = document.getElementById('bg-audio');
+            audio.volume = 0.7;
+            // Try to play; browsers may block autoplay until user interaction
+            audio.play().catch(() => {
+                // Autoplay blocked - will play after any user gesture
+                const resume = () => {
+                    audio.play().catch(()=>{});
+                    window.removeEventListener('click', resume);
+                    window.removeEventListener('keydown', resume);
+                };
+                window.addEventListener('click', resume);
+                window.addEventListener('keydown', resume);
+            });
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name= "theme-color" content="#80ffff">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>michikol3310</title>
+    <link rel="icon" type="image/png" href="./Images/cube_89.png">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Thambi+2:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+
+        button {
+            border: none;
+            background: rgba(128, 255, 255, 0.9);
+            padding: 0;
+            cursor: pointer;
+            box-shadow: none;
+            -webkit-appearance: none;
+            appearance: none;
+            transform-origin: center;
+            transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 180ms;
+            will-change: transform;
+        }
+        button:focus {
+            outline: none;
+        }
+        button img {
+            display: block;
+            width: 250px;
+            height: 250px;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        /* Hover / focus-visible scale-up and active press feedback */
+        button:hover,
+        button:focus-visible {
+            transform: scale(1.08);
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* UI container and counter styling */
+        .ui{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            z-index: 1;
+            pointer-events: auto;
+        }
+        .counter{
+            font-family: 'Baloo Thambi 2', cursive;
+            font-weight: 800;
+            font-size: 64px;
+            line-height: 1;
+            color: #ffffff;
+            -webkit-text-stroke: 2px #000000;
+            text-shadow:
+                0 0 1px #000,
+                0 0 2px #000,
+                0 0 3px #000;
+            user-select: none;
+            transform-origin: center;
+        }
+        /* Large title label (fixed top-left) */
+        .title-label{
+            position: fixed;
+            top: 100px;
+            left: 24px;
+            font-family: 'Baloo Thambi 2', cursive;
+            font-weight: 800;
+            font-size: 128px;
+            line-height: 1;
+            color: #ffffff;
+            -webkit-text-stroke: 4px #000000;
+            text-shadow:
+                0 0 1px #000,
+                0 0 2px #000,
+                0 0 4px #000;
+            user-select: none;
+            z-index: 999;
+            text-align: left;
+            pointer-events: none;
+        }
+
+        @media (max-width: 640px) {
+            .title-label{
+                font-size: 48px;
+                -webkit-text-stroke: 2px #000000;
+                top: 100px;
+                left: 12px;
+            }
+        }
+        /* Launch button styles */
+        .launch-ui{
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 8px;
+        }
+        .launch-btn{
+            font-family: 'Baloo Thambi 2', cursive;
+            font-weight: 700;
+            font-size: 20px;
+            padding: 12px 20px;
+            background: rgba(138,255,255,0.8);
+            color: #000;
+            border-radius: 12px;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+            transition: transform 160ms ease, box-shadow 160ms ease;
+        }
+        .launch-btn:hover,
+        .launch-btn:focus{
+            transform: translateY(-3px) scale(1.04);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.22);
+        }
+        .launch-btn:active{
+            transform: scale(0.98);
+        }
+        /* Fixed transform-based background track for smooth continuous scroll */
+        .bg-wrap{
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .bg-track{
+            display: flex;
+            width: 200vw; /* two viewport-width panels */
+            height: 100vh; /* fill viewport height to avoid vertical clipping */
+            will-change: transform;
+            animation: trackScroll 20s linear infinite;
+        }
+        .bg-track .bg{
+            flex: 0 0 100vw; /* each panel equals one viewport width */
+            background-image: url('./Images/Background.png');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover; /* cover the full viewport without tiling */
+        }
+        @keyframes trackScroll{
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-wrap">
+        <div class="bg-track">
+            <div class="bg"></div>
+            <div class="bg"></div>
+        </div>
+    </div>
+    <div class="title-label">michikol3310</div>
+    <div class="launch-ui">
+        <a href="clicker.html" class="launch-btn" target="_blank" rel="noopener">Open Clicker</a>
+    </div>
+    <audio id="bg-audio" src="./Audio/What.mp3" loop preload="auto"></audio>
+    <script>
+        (function(){
+            const audio = document.getElementById('bg-audio');
+            audio.volume = 0.7;
+            // Try to play; browsers may block autoplay until user interaction
+            audio.play().catch(() => {
+                // Autoplay blocked - will play after any user gesture
+                const resume = () => {
+                    audio.play().catch(()=>{});
+                    window.removeEventListener('click', resume);
+                    window.removeEventListener('keydown', resume);
+                };
+                window.addEventListener('click', resume);
+                window.addEventListener('keydown', resume);
+            });
+        })();
+    </script>
+</body>
+</html>
